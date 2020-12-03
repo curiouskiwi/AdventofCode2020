@@ -48,10 +48,11 @@ int main(int argc, char *argv[])
     if (choice == 1)
         printf("%d\n", trees_hit(1, 3));
     else
-        printf("%d\n", trees_hit(1, 1) * trees_hit(1, 3) * trees_hit(1, 5) * trees_hit(1, 7) * trees_hit(2, 1));
+        printf("%ld\n", trees_hit(1, 1) * trees_hit(1, 3) * trees_hit(1, 5) * trees_hit(1, 7) * trees_hit(2, 1));
 }
 
-int trees_hit(int down, int across)
+// calculate the number of trees hit based on the slope given
+long trees_hit(int down, int across)
 {
     int counter = 0;
     int pos = 0;
