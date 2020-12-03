@@ -2,6 +2,21 @@
 // @curiouskiwi
 // 3 Dec 2020
 
+// For choice 1:
+// Each line gives the password policy and then the password.
+// The password policy indicates the lowest and highest number of
+// times a given letter must appear for the password to be valid.
+// For example, 1-3 a means that the password must contain a at
+// least 1 time and at most 3 times.
+
+// For choice 2:
+// Each policy actually describes two positions in the password,
+// where 1 means the first character, 2 means the second character,
+// and so on. (Be careful; Toboggan Corporate Policies have no concept of "index zero"!)
+// Exactly one of these positions must contain the given letter.
+// Other occurrences of the letter are irrelevant for the purposes of policy enforcement.
+
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -20,7 +35,6 @@ typedef struct puzzle
 }
 PUZZLE;
 
-PUZZLE *parse(char *line);
 bool check(PUZZLE *item, int choice);
 
 
@@ -46,35 +60,16 @@ int main(int argc, char *argv[])
 
     // prepare to read in each line to be parsed and checked
     char buff[MAXLINELENGTH];
-    int index = 0;
-    for (int c = fgetc(file); c != EOF; c = fgetc(file))
+
+    // storage for line
+    PUZZLE p;
+
+    while (fgets(buff, MAXLINELENGTH, file))
     {
-        if (c != '\n')
-        {
-            // Append character to buff
-            buff[index] = c;
-            index++;
-        }
-        else if (index > 0)
-        {
-            // end the string
-            buff[index] = 0;
-
-            // parse the line into values
-            PUZZLE *line = parse(buff);
-
-            // check if line meets the requirements
-            if (check(line, choice))
-            {
-                meetsreqs++;
-            }
-
-            // get ready for next line
-            free(line);
-            index = 0;
-        }
+        sscanf(buff, "%d-%d %c: %s\n", &p.min, &p.max, &p.c, p.password);
+        // check if line meets the requirements
+        if (check(&p, choice)) meetsreqs++;
     }
-
     // done so we can close the file
     fclose(file);
 
@@ -84,62 +79,22 @@ int main(int argc, char *argv[])
 
 // check if the line meets the requirements
 // assumes that data from file meets the spec, so no error checking
-bool check(PUZZLE *item, int choice)
+bool check(PUZZLE *p, int choice)
 {
-    char *p = item->password;
-    char c = item->c;
-    int len = strlen(p);
-    int min = item->min;
-    int max = item->max;
     int count = 0;
 
     // choice 1 checks if c appears min-max times
     if (choice == 1)
     {
-        for (int j = 0; j < len; j++)
-        {
-            if (p[j] == c)
-            {
-                count++;
-            }
-        }
-        if (count >= min && count <= max)
-        {
-            return true;
-        }
+        for (char *q = p->password; *q; q++)
+            if (*q == p->c) count++;
+        return (count >= p->min && count <= p->max);
     }
 
     // choice 2 checks if c appears only once in positions first/sec
     else
     {
-        // not zero indexed so adjust
-        int first = min - 1;
-        int sec = max - 1;
-
-        if ((p[first] == c && p[sec] != c) || (p[first] != c && p[sec] == c))
-        {
-            return true;
-        }
+        return ((p->password[p->min-1] == p->c) ^ (p->password[p->max-1] == p->c));
     }
-    return false;
 }
 
-// parses a given line like "1-3 r: rzqrmz" into elements
-// assumes that line will meet that format as given
-PUZZLE *parse(char *line)
-{
-    // create struct to hold the elements
-    PUZZLE *p = malloc(sizeof(PUZZLE));
-
-    // set the min and max values
-    p->min = atoi(strtok(line, "-")) ;
-    p->max = atoi(strtok(NULL, " "));
-
-    // only want first char for c
-    p->c = strtok(NULL, ":")[0];
-
-    // +1 to get rid of leading space
-    strcpy(p->password, (strtok(NULL, "")) + 1);
-
-    return p;
-}
