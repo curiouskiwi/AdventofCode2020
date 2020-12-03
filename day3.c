@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 // calculate the number of trees hit based on the slope given
 long trees_hit(int down, int across)
 {
-    int counter = 0;
+    long counter = 0;
     int pos = 0;
     for (int i = 0; i < LINES; i+=down)
     {
