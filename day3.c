@@ -18,7 +18,7 @@
 
 char lines[LINES][LENGTH+2];
 
-int trees_hit(int down, int across);
+long trees_hit(int down, int across);
 
 int main(int argc, char *argv[])
 {
@@ -46,12 +46,11 @@ int main(int argc, char *argv[])
 
    // do the rest
     if (choice == 1)
-        printf("%d\n", trees_hit(1, 3));
+        printf("%ld\n", trees_hit(1, 3));
     else
         printf("%ld\n", trees_hit(1, 1) * trees_hit(1, 3) * trees_hit(1, 5) * trees_hit(1, 7) * trees_hit(2, 1));
 }
 
-// calculate the number of trees hit based on the slope given
 long trees_hit(int down, int across)
 {
     long counter = 0;
