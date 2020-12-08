@@ -12,10 +12,14 @@ def main():
 
     instructions = []
 
+    # example input:  jmp +248
     for line in lines:
         l = []
+        # instruction
         l.append(line.split()[0])
+        # argument
         l.append(int(line.split()[1]))
+        # visited flag
         l.append(0)
         instructions.append(l)
 
