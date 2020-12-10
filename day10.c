@@ -113,7 +113,9 @@ void sort(int values[], int n)
 
  similarly, with 4 adaptors in a row,  there are 4 valid combos;  with 3, there are 2, and with 2 there's only 1.
  So my possibilities array is just a lookup table to tell me how many combos are possible for a given group size.
- Now, as I linearly search through my adaptors, when I hit a gap of 1, I keep count of how many there are until I hit a 3, and lookup the combos possible.  The overall combo count is then multiplied by the possibilities for that group.  (if the gap is 3, there's only one possibility, so we don't need to worry about that, since multiplying by 1 won't matter.)
+ Now, as I linearly search through my adaptors, when I hit a gap of 1, I keep count of how many there are until I 
+ hit a 3, and lookup the combos possible.  The overall combo count is then multiplied by the possibilities for that group.  
+ (if the gap is 3, there's only one possibility, so we don't need to worry about that, since multiplying by 1 won't matter.)
 
  As example using the sample data given:
  int smnums[] = {0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 14, 17, 18, 19, 20, 23, 24, 25, 28, 31,
