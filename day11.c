@@ -41,8 +41,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-
-    // need array to also have start at 0 and end at max+3
+    // has +2 to hold the newline and nul char but we'll ignore those going forward
     char (*spots)[width] = calloc(height, width+2);
 
     for (int i = 0; i < height; i++)
@@ -87,15 +86,15 @@ int partone (int h, int w, char temp[h][w], char spots[h][w])
     for (int i = 0; i < h; i++)
     {
         // if we are on the top or bottom row
-        xmin = (i == 0) ? 0 : -1;
-        xmax = (i == h - 1) ? 0 : 1;
+        ymin = (i == 0) ? 0 : -1;
+        ymax = (i == h - 1) ? 0 : 1;
 
         // iterate over columns
         for (int j = 0; j < w; j++)
         {
             // if we are on the left or right side column
-            ymin = (j == 0) ? 0 : -1;
-            ymax = (j == w - 1) ? 0 : 1;
+            xmin = (j == 0) ? 0 : -1;
+            xmax = (j == w - 1) ? 0 : 1;
 
             //printf("%i:%i:%c\n", i, j, spots[i][j]);
             //iterate over surrounding seats
@@ -103,15 +102,15 @@ int partone (int h, int w, char temp[h][w], char spots[h][w])
             if (seat != '.')
             {
                 int countL = 0, countS = 0, count = 0;
-                for (int x = xmin; x <= xmax; x++)
+                for (int y = ymin; y <= ymax; y++)
                 {
-                    for (int y = ymin; y <= ymax; y++)
+                    for (int x = xmin; x <= xmax; x++)
                     {
-                        char chk = spots[i+x][j+y];
-                        //printf("%i:%i ", x, y);
+                        char chk = spots[i+y][j+x];
+                        
 
                         // don't want to check the actual seat
-                        if (!(x == 0 && y == 0))
+                        if (!(y == 0 && x == 0))
                         {
                             if (chk != '.')
                                 count++;
@@ -189,10 +188,10 @@ int parttwo(int h, int w, char temp[h][w], char spots[h][w])
                 for (int d = 0; d < 8; d++)
                 {
                     // skip over the spots that are not seats
-                    for (x = j+dir[d].dx, y = i+dir[d].dy; x != dir[d].xLim && y != dir[d].yLim && spots[y][x] == '.'; x+=dir[d].dx, y+=dir[d].dy);
+                    for (y = i+dir[d].dy, x = j+dir[d].dx;  y != dir[d].yLim && x != dir[d].xLim && spots[y][x] == '.';  y+=dir[d].dy), x+=dir[d].dx;
 
                     // we've found a seat
-                    if (x!=dir[d].xLim && y!=dir[d].yLim)
+                    if (y != dir[d].yLim && x != dir[d].xLim)
                     {
                         checked++;
                         if (empty(spots[y][x]))
