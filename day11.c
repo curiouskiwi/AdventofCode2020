@@ -7,11 +7,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define taken(a) (a == '#')
+#define empty(a) (a == 'L')
 
 int partone(int h, int w, char temp[h][w], char spots[h][w]);
 int parttwo(int h, int w, char temp[h][w], char spots[h][w]);
-bool taken(char c);
-bool empty(char c);
 int occupyct(int h, int w, char spots[h][w]);
 void copyseats(int h, int w, char dest[h][w], char src[h][w]);
 void printseats(int h, int w, char s[h][w]);
@@ -161,14 +161,14 @@ int parttwo(int h, int w, char temp[h][w], char spots[h][w])
         int yLim;
     }
     dir[8] = {
-                {-1, -1, -1, -1},  // left/up
+                {-1, -1, -1, -1},    // left/up
                 {+1, -1,  w, -1},    // right/up
-                {+1, +1,  w,  h},     // right/down
+                {+1, +1,  w,  h},    // right/down
                 {-1, +1, -1,  h},    // left/down
                 {-1,  0, -1, -1},    // left
-                {+1,  0,  w, -1},     // right
+                {+1,  0,  w, -1},    // right
                 {0,  -1, -1, -1},    // up
-                {0,  +1, -1,  h}      // down
+                {0,  +1, -1,  h}     // down
             };
 
     int switches = 0;
@@ -188,7 +188,9 @@ int parttwo(int h, int w, char temp[h][w], char spots[h][w])
                 for (int d = 0; d < 8; d++)
                 {
                     // skip over the spots that are not seats
-                    for (y = i+dir[d].dy, x = j+dir[d].dx;  y != dir[d].yLim && x != dir[d].xLim && spots[y][x] == '.';  y+=dir[d].dy), x+=dir[d].dx;
+                    for (y = i + dir[d].dy, x = j + dir[d].dx;
+                         y != dir[d].yLim && x != dir[d].xLim && spots[y][x] == '.';
+                         y += dir[d].dy, x += dir[d].dx);
 
                     // we've found a seat
                     if (y != dir[d].yLim && x != dir[d].xLim)
@@ -200,7 +202,6 @@ int parttwo(int h, int w, char temp[h][w], char spots[h][w])
                             countS++;
                     }
                 }
-
                 // printf("%c:%i%i: L: %i S: %i chk: %i\n", seat, i, j, countL, countS, checked);
                 // if seat is empty and no occupied seen, change to #
                 if (empty(seat) && countL == checked)
@@ -224,17 +225,6 @@ int parttwo(int h, int w, char temp[h][w], char spots[h][w])
     return switches;
 }
 
-
-bool taken(char c)
-{
-    return c == '#';
-}
-
-
-bool empty(char c)
-{
-    return c == 'L';
-}
 
 int occupyct(int h, int w, char spots[h][w])
 {
