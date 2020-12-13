@@ -8,24 +8,34 @@ long timebus(long bus, long next_bus, long gap);
 
 int main(void)
 {
-
+    int timestamp = 1011416;
     int bus[] = {41,37,911,13,17,23,29,827,19};
     int gap[] = {0,35,41,54,55,64,70,72,91};
 
-    // int bus[] = {17,13,19};
-    // int gap[] = {0, 2, 3};
-
     int size = sizeof(bus)/ sizeof(bus[0]);
+    int p1 = 0;
+    int min = timestamp;
+    int minbus = 0;
+    for (int i = 0; i < size; i++)
+    {
+        p1 = ((timestamp % bus[i]) - bus[i]) * -1;
+        if (p1 < min)
+            {
+                min = p1;
+                minbus = i;
+            }
+    }
+    printf("Part 1: %i\n", min * bus[minbus]);
 
     long buses_so_far = bus[0];
     long t = 0;
     for (int i = 1; i < size; i++)
     {
-        printf("t = timebus(%li, %i, %i + %li) + %li\n", buses_so_far, bus[i], gap[i], t, t);
+        // printf("t = timebus(%li, %i, %i + %li) + %li\n", buses_so_far, bus[i], gap[i], t, t);
         t = timebus(buses_so_far, bus[i], gap[i] + t) + t;
         buses_so_far *= bus[i];
     }
-    printf("t: %li\n", t);
+    printf("Part 2: %li\n", t);
 }
 
 
@@ -34,14 +44,9 @@ long timebus(long bus, long next_bus, long gap)
     for (long i = 0, j = 0; i < bus * next_bus; i += bus)
     {
         if (j < i + gap)
-        {
             j += ((i + gap - j)/next_bus) * next_bus;
-        }
-        // printf("i: %li j: %li\n", i, j);
         if (i + gap == j)
-        {
             return i;
-        }
    }
    return 0;
 }
