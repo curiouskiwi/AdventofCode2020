@@ -18,9 +18,9 @@ def main():
             thisnum = 0
         turn+=1
         # add key to dict if not already there
-        if thisnum in nums:
+        try:
             previndex = nums[thisnum]
-        else:
+        except KeyError:
             previndex = 0
         nums[thisnum] = turn
     print(thisnum)
