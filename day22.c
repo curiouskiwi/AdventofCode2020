@@ -28,7 +28,7 @@ DECK player[2] =
     {0, NUMCARDS/2 - 1, NUMCARDS/2, {45,7,9,4,15,19,49,3,36,25,24,2,21,37,35,44,29,13,32,22,17,30,42,40,6}}
     };
 
-
+int gameplayed = 0;
 
 DECK *playgame(DECK *a, DECK *b);
 void insert(int data, DECK *d);
@@ -58,17 +58,50 @@ int main(void)
 
 DECK *playgame(DECK *one, DECK *two)
 {
+    gameplayed++;
+
+
+
+
+    int lastvisited[NUMCARDS][NUMCARDS] = {0};
+    int currentrepeat = -1;
+    int repeatrun = 0;
     int rounds_played = 0;
+    int repeatlen = 0;
+
     while (!(isEmpty(one) || isEmpty(two)))
     {
+         rounds_played++;
         // this is a cheating way to avoid infinite loop... test larger numbers until they return the same
-        rounds_played++;
-        if (rounds_played == 1000)
-        {
-            return one;
-        }
+        // if (rounds_played >800)        {
+        //     return one;
+        // }
+
         int a = playCard(one);
         int b = playCard(two);
+     
+        if (lastvisited[a-1][b-1])
+        {
+            int thisrepeat = rounds_played - lastvisited[a-1][b-1];
+            if (thisrepeat > repeatlen)
+            {
+                repeatrun = 0;
+                repeatlen = thisrepeat;
+            }
+            else
+            {
+                repeatrun++;
+
+                if (repeatrun == repeatlen)
+                {
+                    // printf("ENDING! (%i) rounds: %i\n", repeatrun, rounds_played);
+                    return one;
+                }
+            }
+
+        }
+            lastvisited[a-1][b-1] = rounds_played;
+        if (rounds_played==999) printf("Run=%d, Len=%d\n", repeatrun, repeatlen);
 
         // Do we need to play Recursive Combat?
         if (size(one) >= a && size(two) >= b)
@@ -123,8 +156,6 @@ DECK *playgame(DECK *one, DECK *two)
 
     return winner;
 }
-
-
 
 
 void insert(int data, DECK *d)
