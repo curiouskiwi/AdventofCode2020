@@ -11,6 +11,7 @@
 #define LINE 50
 #define DIM 200
 
+// white tiles are false, black are true
 bool tilearea[DIM][DIM] = {{false}};
 
 int countblacktiles();
@@ -30,29 +31,28 @@ int main(void)
             switch (*ptr)
             {
                 // e, se, sw, w, nw, ne
-                case 'e': x++; break;
+                case 'e':   x++;
+                            break;
 
-                case 'w': x--; break;
+                case 'w':   x--;
+                            break;
 
-                case 'n': y++; ptr++;
+                case 'n':   y++; ptr++;
+                            if (*ptr == 'e')
+                                x++;
+                            break;
 
-                    if (*ptr == 'e')
-                        x++;
-                    break;
+                case 's':   y--; ptr++;
+                            if (*ptr == 'w')
+                                x--;
+                            break;
 
-                    // else if (*ptr) == 'w')
-                    //      break;
-
-
-                case 's': y--; ptr++;
-
-                    if (*ptr == 'w')
-                        x--;
-                    break;
-
+                default: printf("PROBLEM!\n"); return -1;
             }
+
             ptr++;
         }
+        // flip the tile
         tilearea[x][y] = !tilearea[x][y];
     }
     fclose(file);
@@ -60,7 +60,10 @@ int main(void)
     printf("Part 1; %i\n", countblacktiles());
 
     // PART 2
+    // all tiles are flipped simultaneously so we need a copy
     bool copyarea[DIM][DIM];
+
+    // rearrange each day for 100 days
     for (int c = 0; c < 100; c++)
     {
         memcpy(copyarea, tilearea, sizeof(copyarea));
@@ -69,6 +72,7 @@ int main(void)
         {
             for (int y = 1; y < DIM-1; y++)
             {
+                // count black neighbours
                 int counter = 0;
                 if (copyarea[x][y+1]) counter++;
                 if (copyarea[x+1][y+1]) counter++;
@@ -104,9 +108,7 @@ int countblacktiles()
         for (int j = 0; j < DIM; j++)
         {
             if (tilearea[i][j])
-            {
                 count++;
-            }
         }
     }
     return count;
