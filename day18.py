@@ -28,7 +28,6 @@ def parseeq (text):
 def calc(eq):
 
     parts = eq.split()
-    print(parts)
     currentop = 'x'
     a = 0
     b = 0
@@ -49,16 +48,7 @@ def calc(eq):
                     result = b
                 currentop = 'x'
         except:
-            if part in ['+', '*']:
-                currentop = part
-            elif part[0] == '(':
-                new = ' '.join(parts[i:])
-                pos = new.find(')')
-                newl = new[1:pos]
-                result = calcit( result, calc(newl),  currentop)
-            else:
-                if part[-1] == ')':
-                    return result
+            currentop = part
                 
     return result * interim
 
