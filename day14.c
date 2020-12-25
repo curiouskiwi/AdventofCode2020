@@ -8,6 +8,8 @@
 //#define FILENAME "smdata.txt"
 #define FILENAME "data.txt"
 // #define FILENAME "tiny.txt"
+#define N 4096
+#define hash(address) (address & 0xfff)
 
 typedef struct node
 {
@@ -17,7 +19,9 @@ typedef struct node
 }
 node;
 
-node *root = NULL;
+//node *root = NULL;
+
+node *table[N];
 
 node *findnode(long address);
 void addnode(long address, long xMask, long data);
@@ -41,7 +45,7 @@ int main(void)
         {
             // 01111X0011X11110XX11X110111001X00001
 
-            printf("read mask %s\n", bitmask);
+            // printf("read mask %s\n", bitmask);
 
             xMask = orMask = andMask = 0;
             for (int i = 0; i < 36; i++)
@@ -81,12 +85,15 @@ int main(void)
     printf("Part 1: %li\n", sum);
 
     sum = 0;
-    while (root)
+    for (int i = 0; i < N; i++)
     {
-        sum += root->value;
-        node *t = root;
-        root = root->next;
-        free(t);
+        while (table[i])
+        {
+            sum += table[i]->value;
+            node *t = table[i];
+            table[i] = table[i]->next;
+            free(t);
+        }
     }
     // total heap usage: 80,125 allocs, 80,125 frees, 1,927,600 bytes allocated
     printf("Part 2: %li\n", sum);
@@ -117,10 +124,10 @@ void addnode(long address, long xMask, long data)
         {
             t = malloc(sizeof(node));
             if (!t) {printf("couldn't make node\n"); return;}
-            t->next = root;
+            t->next = table[hash(address)];
             t->value = data;
             t->address = address;
-            root = t;
+            table[hash(address)] = t;
             // printf("%09lx = %ld\n", address, data);
 
         }
@@ -131,7 +138,7 @@ void addnode(long address, long xMask, long data)
 
 node *findnode(long address)
 {
-    node *cursor = root;
+    node *cursor = table[hash(address)];
     while (cursor)
     {
         if (cursor->address == address)
