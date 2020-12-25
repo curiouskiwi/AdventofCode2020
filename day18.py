@@ -1,3 +1,8 @@
+# Advent of Code - Day 18
+# @curiouskiwi / @gary_anderson
+# 25 Dec 2020 
+
+
 def main():
     with open("data.txt", "r") as f:
         lines = f.readlines()
